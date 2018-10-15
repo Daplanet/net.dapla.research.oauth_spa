@@ -58,10 +58,10 @@ services:
       - "4180/tcp"
     command: |
       --cookie-secure=false
-      --cookie-secret=0f6746fe3446fc5249d7db0ccb7d75bf889a0255c1fbb35f0f278b61d20a79d9
-      --client-id=6f3a3cd7f4581078a91d
-      --client-secret=c844d8a3983a68261e93877a3d05c3c02389a6d7
-      --github-org="Daplanet"
+      --cookie-secret=$cookie-secret
+      --client-id=$client-id
+      --client-secret=$client-secret
+      --github-org=$github-org
       --provider=github
       --upstream=http://oauthspa:8043/
       --http-address=0.0.0.0:4180
@@ -75,7 +75,7 @@ services:
         traefik.enable: "true"
         traefik.port: "4180"
         traefik.frontend.rule: "Host:app.testnet.dapla.net"
-        traefik.backend: "torrent"
+        traefik.backend: "oauthspaproxy"
 
   oauthspa:
     image: net.dapla.research.oauth_spa:latest 
