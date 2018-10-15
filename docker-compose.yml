@@ -1,0 +1,106 @@
+---
+version: '3.4'
+
+x-timezone: &default_timezone
+  TZ: "America/Chicago"
+
+x-network: &default_network
+  dns: '1.1.1.1'
+  dns_search: 'dapla.net'
+  networks:
+    - public
+
+x-proxy-env: &default_proxy
+  - http_proxy="http://proxy.local:8118"
+  - https_proxy="https://proxy.local:8118"
+  - socks_proxy="proxy.local:9051"
+  - no_proxy="127.0.0.1,localhost,.localdomain,.local"
+  - HTTP_PROXY="http://proxy.local:8118"
+  - HTTPS_PROXY="https://proxy.local:8118"
+  - SOCKS_PROXY="proxy.local:9051"
+  - NO_PROXY="127.0.0.1,localhost,.localdomain,.local"
+
+x-logging: &default_logging
+  driver: 'syslog'
+  options:
+    syslog-address: 'udp://telegraf.local:6514'
+
+x-deployment: &default_deployment
+  restart_policy:
+    condition: on-failure
+  mode: replicated
+  replicas: 1
+
+x-platform-enable: &enable_paas
+  com.centurylinklabs.watchtower.enable: "true"
+  traefik.frontend.priority: "5"
+  traefik.frontend.entryPoints: "http, https"
+  traefik.docker.network: "public"
+  traefik.enable: "true"
+  traefik.default.protocol: "http"
+  orbiter: "true"
+  orbiter.up: "3"
+  orbiter.down: "1"
+
+x-platform-disable: &disable_paas
+  com.centurylinklabs.watchtower.enable: "false"
+  traefik.enable: "false"
+  orbiter: "false"
+
+services:
+
+  oauthspaproxy:
+    image: a5huynh/oauth2_proxy:latest
+    networks:
+      - public
+      - internal
+    ports:
+      - "4180/tcp"
+    command: |
+      --cookie-secure=false
+      --cookie-secret=0f6746fe3446fc5249d7db0ccb7d75bf889a0255c1fbb35f0f278b61d20a79d9
+      --client-id=6f3a3cd7f4581078a91d
+      --client-secret=c844d8a3983a68261e93877a3d05c3c02389a6d7
+      --github-org="Daplanet"
+      --provider=github
+      --upstream=http://oauthspa:8043/
+      --http-address=0.0.0.0:4180
+      --email-domain="*"
+      --redirect-url=https://app.testnet.dapla.net/oauth2/callback
+    << : *default_network
+    deploy:
+      << : *default_deployment
+      labels:
+        << : *enable_paas
+        traefik.enable: "true"
+        traefik.port: "4180"
+        traefik.frontend.rule: "Host:app.testnet.dapla.net"
+        traefik.backend: "torrent"
+
+  oauthspa:
+    image: net.dapla.research.oauth_spa:latest 
+    << : *default_network
+    hostname: "app.testnet.dapla.net"
+    ports:
+      - "8043"
+    environment:
+      << : *default_timezone
+    deploy:
+      << : *default_deployment
+      labels:
+        << : *enable_paas
+
+networks:
+
+  public:
+    external:
+      name: public
+
+volumes:
+
+  transmission-data: {}
+  transmission-downloads: {}
+  transmission-watch: {}
+
+...
+# vim: set sts=2 ts=2 sw=2 ai et list number :
