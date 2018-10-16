@@ -2,9 +2,6 @@ IMAGE_NAME		:= net.dapla.research.oauth_spa
 IMAGE_VERSION		:= 1.0.0
 STACK_NAME		:= $(shell basename "$$(pwd)")
 VIRTUAL_HOST		:= app.local
-ENVIRONMENT		:= production
-
-export ENVIRONMENT
 
 .PHONY: all clean deploy image test $(VIRTUAL_HOST)
 .DEFAULT: all
