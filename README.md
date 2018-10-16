@@ -4,11 +4,23 @@ Oauth2 as a service POC with static single page application
 
 ## Usage
 
+### automated
 ```
 make
-open https://app.testnet.dapla.net/ || start https://app.testnet.dapla.net/ || xdg-open https://app.testnet.dapla.net/
+
 ```
 
+### manual
+```
+source .env
+docker stack deploy -c docker-compose.yml $(basename "$(pwd)")
+
+### Access
+```
+$ open https://app.testnet.dapla.net/     || \
+  start https://app.testnet.dapla.net/    || \
+  xdg-open https://app.testnet.dapla.net/
+```
 
 ## Endpoints
 
