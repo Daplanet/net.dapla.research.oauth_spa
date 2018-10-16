@@ -14,6 +14,7 @@ make
 ```
 source .env
 docker stack deploy -c docker-compose.yml $(basename "$(pwd)")
+```
 
 ### Access
 ```
