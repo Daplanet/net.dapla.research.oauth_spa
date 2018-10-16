@@ -7,7 +7,6 @@ Oauth2 as a service POC with static single page application
 ### automated
 ```
 make
-
 ```
 
 ### manual
