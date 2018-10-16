@@ -26,6 +26,7 @@ $ open https://app.testnet.dapla.net/     || \
 ## Endpoints
 
 | | |
+|=|=|
 | / | static site - ctf flag |
 | /ping | Heartbeat |
 | /robots.txt | RFC 1808 |
